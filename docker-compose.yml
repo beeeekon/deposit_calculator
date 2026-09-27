@@ -1,0 +1,31 @@
+#docker-compose.yml - описание многоконтейнерного приложения
+#запускает два контейнера Spring Boot и Nginx + React
+
+services:
+  backend:
+    build: ./backend/deposit_calculator
+
+    container_name: deposit-backend
+
+    #открываем порт только ВНУТРИ compose-сети
+    #наружу НЕ пробрасываем - доступ только через frontend-контейнер (через Nginx-прокси)
+    expose:
+      - "8080"
+
+    #политика перезапуска перезапускать если упал
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+
+    container_name: deposit-frontend
+
+    #пробрасываем порт 80 наружу: пользователь заходит на localhost:80.
+    ports:
+      - "80:80"
+
+    #зависит от backend - Compose сначала поднимет backend.
+    depends_on:
+      - backend
+
+    restart: unless-stopped
