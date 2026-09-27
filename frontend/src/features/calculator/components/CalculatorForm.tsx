@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { DepositRequest, DepositResponse } from '../types';
 import { calculateDeposit } from '../api/calculate';
-import { validate, type ValidationErrors } from '../validation';
+import { validate} from '../validation';
 
 // Пропсы - что родитель передаёт в этот компонент
 // onSubmitResult - функция которую мы вызовем когда получим результат.
@@ -15,7 +15,7 @@ export function CalculatorForm({ onSubmitResult }: Props) {
   const [amount, setAmount] = useState('');
   const [months, setMonths] = useState('');
   const [rate, setRate] = useState('');
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  
   const currentErrors = validate({ amount, months, rate });
   const hasErrors = Object.keys(currentErrors).length > 0;
 
@@ -25,12 +25,9 @@ export function CalculatorForm({ onSubmitResult }: Props) {
     // Отменяем стандартное поведение формы - перезагрузку страницы
     event.preventDefault();
 
-    const validationErrors = currentErrors;
     if (hasErrors) {
-      setErrors(validationErrors);
       return;
     }
-    setErrors({});
 
     // Собираем объект запроса Number() превращает строку в число
     const request: DepositRequest = {
